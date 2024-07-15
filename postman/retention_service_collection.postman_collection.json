@@ -1,0 +1,1891 @@
+{
+	"info": {
+		"_postman_id": "16731f17-2147-453a-bbec-086c79a2b4c4",
+		"name": "retention_service_collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "26528844"
+	},
+	"item": [
+		{
+			"name": "Password Grant - tenant",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"tmp_tenant_access_token\", jsonData.access_token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "password",
+							"value": "{{tenant_user_password}}",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "{{user_name}}",
+							"type": "text"
+						},
+						{
+							"key": "saveHelperData",
+							"value": "true",
+							"type": "text"
+						},
+						{
+							"key": "showPassword",
+							"value": "false",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{app_confclient_id}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{app_confclient_secret}}",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "{{scope}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": "{{tenant_token_url}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Fixed Date Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Get Retention Policy Id\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).is.not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).is.not.null;\r",
+							"    console.log(jsonData.retentionPolicyId);\r",
+							"    pm.environment.set(\"tmp_fixed_date_retention_policy_id\", jsonData.retentionPolicyId);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const retentionPolicyName = \"Fixed Date\" + Math.floor((Math.random()*1000+1));\r",
+							"pm.environment.set(\"tmp_retention_policy_name\", retentionPolicyName);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Fixed Date Description\",\r\n    \"mandate\": \"Mandate\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 4,\r\n            \"retentionYears\": 0,\r\n            \"retentionMonths\": 0,\r\n            \"retentionDays\": 0,\r\n            \"fixedDate\": \"2024-03-27T04:00:00.000Z\"\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Fixed Date Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_fixed_date_retention_policy_id\"));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_fixed_date_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Put Fixed Date Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_fixed_date_retention_policy_id\"));\r",
+							"    pm.expect(jsonData.mandate).to.eql(\"Mandate1\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Fixed Date Description\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 4,\r\n            \"retentionYears\": 0,\r\n            \"retentionMonths\": 0,\r\n            \"retentionDays\": 0,\r\n            \"fixedDate\": \"2024-03-27T04:00:00.000Z\"\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_fixed_date_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Patch Fixed Date Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_fixed_date_retention_policy_id\"));\r",
+							"    pm.expect(jsonData.scopeNotes).to.eql(\"Scope1\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"scopeNotes\": \"Scope1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_fixed_date_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Fixed Date Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"\tpm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_fixed_date_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Calculated Date Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Get Retention Policy Id\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).is.not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).is.not.null;\r",
+							"    console.log(jsonData.retentionPolicyId);\r",
+							"    pm.environment.set(\"tmp_calculated_date_retention_policy_id\", jsonData.retentionPolicyId);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const retentionPolicyName = \"Calculated Date\" + Math.floor((Math.random()*1000+1));\r",
+							"pm.environment.set(\"tmp_retention_policy_name\", retentionPolicyName);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Desc\",\r\n    \"mandate\": \"Mandate\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 1,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                 \"create_time\"\r\n            ]\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Calculated Date Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_calculated_date_retention_policy_id\"));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_calculated_date_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Put Caclulated Date Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_calculated_date_retention_policy_id\"));\r",
+							"    pm.expect(jsonData.mandate).to.eql(\"Mandate1\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Desc\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 1,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                 \"create_time\"\r\n            ]\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_calculated_date_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Patch Calculated Date Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_calculated_date_retention_policy_id\"));\r",
+							"    pm.expect(jsonData.scopeNotes).to.eql(\"Scope1\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"scopeNotes\": \"Scope1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_calculated_date_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Calendar Date Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Get Retention Policy Id\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).is.not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).is.not.null;\r",
+							"    console.log(jsonData.retentionPolicyId);\r",
+							"    pm.environment.set(\"tmp_calendar_date_retention_policy_id\", jsonData.retentionPolicyId);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const retentionPolicyName = \"Calendar Date\" + Math.floor((Math.random()*1000+1));\r",
+							"pm.environment.set(\"tmp_retention_policy_name\", retentionPolicyName);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Desc\",\r\n    \"mandate\": \"Mandate\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 2,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 4,\r\n            \"yearEndMonth\": 3,\r\n            \"yearEndDay\": 31,\r\n\r\n            \"baseDate\": [\r\n\r\n                  \"create_time\"\r\n\r\n             ]\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Calendar Date Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_calendar_date_retention_policy_id\"));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_calendar_date_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Put Calendar Date Retention Policy Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_calendar_date_retention_policy_id\"));\r",
+							"    pm.expect(jsonData.mandate).to.eql(\"Mandate1\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Desc\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 2,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 4,\r\n            \"yearEndMonth\": 3,\r\n            \"yearEndDay\": 31,\r\n\r\n            \"baseDate\": [\r\n\r\n                  \"create_time\"\r\n\r\n             ]\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_calendar_date_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Patch Calendar Date Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_calendar_date_retention_policy_id\"));\r",
+							"    pm.expect(jsonData.scopeNotes).to.eql(\"Scope1\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"scopeNotes\": \"Scope1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_calendar_date_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Calendar Date Retention Policy Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"\tpm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_calendar_date_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Event Legacy Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Get Retention Policy Id\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).is.not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).is.not.null;\r",
+							"    console.log(jsonData.retentionPolicyId);\r",
+							"    pm.environment.set(\"tmp_event_legacy_retention_policy_id\", jsonData.retentionPolicyId);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const retentionPolicyName = \"Event Legacy\" + Math.floor((Math.random()*1000+1));\r",
+							"pm.environment.set(\"tmp_retention_policy_name\", retentionPolicyName);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Description\",\r\n    \"mandate\": \"Mandate\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 3,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"eventRule\": \"create_time\",\r\n            \"triggerType\": \"null\",\r\n            \"triggerCategory\": \"null\",\r\n            \"taggingAttribute\": \"null\"\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Event Legacy Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_event_legacy_retention_policy_id\"));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_legacy_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Put Event Legacy Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_event_legacy_retention_policy_id\"));\r",
+							"    pm.expect(jsonData.mandate).to.eql(\"Mandate1\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Description\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 3,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"eventRule\": \"create_time\",\r\n            \"triggerType\": \"null\",\r\n            \"triggerCategory\": \"null\",\r\n            \"taggingAttribute\": \"null\"\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_legacy_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Patch Event Legacy Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_event_legacy_retention_policy_id\"));\r",
+							"    pm.expect(jsonData.scopeNotes).to.eql(\"Scope1\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"scopeNotes\": \"Scope1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_legacy_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Event Legacy Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"\tpm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_legacy_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Event Container Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Get Retention Policy Id\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).is.not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).is.not.null;\r",
+							"    console.log(jsonData.retentionPolicyId);\r",
+							"    pm.environment.set(\"tmp_event_container_retention_policy_id\", jsonData.retentionPolicyId);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const retentionPolicyName = \"Event Container\" + Math.floor((Math.random()*1000+1));\r",
+							"pm.environment.set(\"tmp_retention_policy_name\", retentionPolicyName);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"desc\",\r\n    \"mandate\": \"mandate\",\r\n    \"scopeNotes\": \"scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 6,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 1,\r\n            \"retentionDays\": 1,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                  \"properties.entry_date_lh2ln\"\r\n\r\n             ],\r\n            \"eventRule\": \"properties.entry_date_lh2ln\",\r\n            \"triggerType\": \"ccm2_entry_documents_3vv8a\",\r\n            \"triggerCategory\": \"folder\",\r\n            \"searchRules\": [\r\n                {\r\n                    \"actionType\": \"CONTAINER\"\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Event Container Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_event_container_retention_policy_id\"));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_container_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Put Event Container Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_event_container_retention_policy_id\"));\r",
+							"    pm.expect(jsonData.mandate).to.eql(\"Mandate1\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"desc\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 6,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 1,\r\n            \"retentionDays\": 1,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                  \"properties.entry_date_lh2ln\"\r\n\r\n             ],\r\n            \"eventRule\": \"properties.entry_date_lh2ln\",\r\n            \"triggerType\": \"ccm2_entry_documents_3vv8a\",\r\n            \"triggerCategory\": \"folder\",\r\n            \"searchRules\": [\r\n                {\r\n                    \"actionType\": \"CONTAINER\"\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_container_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Patch Event Container Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_event_container_retention_policy_id\"));\r",
+							"    pm.expect(jsonData.scopeNotes).to.eql(\"Scope1\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"scopeNotes\": \"Scope1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_container_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Event Container Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"\tpm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_container_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Event Tag  Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Get Retention Policy Id\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).is.not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).is.not.null;\r",
+							"    console.log(jsonData.retentionPolicyId);\r",
+							"    pm.environment.set(\"tmp_event_tag_retention_policy_id\", jsonData.retentionPolicyId);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const retentionPolicyName = \"Event Tag\" + Math.floor((Math.random()*1000+1));\r",
+							"pm.environment.set(\"tmp_retention_policy_name\", retentionPolicyName);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"desc\",\r\n    \"mandate\": \"mandate\",\r\n    \"scopeNotes\": \"scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 6,\r\n            \"retentionYears\": 2,\r\n            \"retentionMonths\": 1,\r\n            \"retentionDays\": 1,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                    \"properties.end_of_employment1\"\r\n\r\n             ],\r\n            \"eventRule\": \"properties.end_of_employment1\",\r\n            \"triggerType\": \"ccm2_dh_employee_daqbp\",\r\n            \"triggerCategory\": \"file\",\r\n            \"taggingAttribute\": \"properties.employee_id3\",\r\n            \"searchRules\": [\r\n                {\r\n                    \"actionType\": \"SEARCH\",\r\n                    \"category\": \"file\",\r\n                    \"type\": \"ccm2_dh_employee_docs_7c1ux\",\r\n                    \"attribute\": \"properties.employee_id1\"\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Event Container Retention Policy Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_event_tag_retention_policy_id\"));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_tag_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Put Event Container Retention Policy Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_event_tag_retention_policy_id\"));\r",
+							"    pm.expect(jsonData.mandate).to.eql(\"Mandate1\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"desc\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 6,\r\n            \"retentionYears\": 2,\r\n            \"retentionMonths\": 1,\r\n            \"retentionDays\": 1,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                    \"properties.end_of_employment1\"\r\n\r\n             ],\r\n            \"eventRule\": \"properties.end_of_employment1\",\r\n            \"triggerType\": \"ccm2_dh_employee_daqbp\",\r\n            \"triggerCategory\": \"file\",\r\n            \"taggingAttribute\": \"properties.employee_id3\",\r\n            \"searchRules\": [\r\n                {\r\n                    \"actionType\": \"SEARCH\",\r\n                    \"category\": \"file\",\r\n                    \"type\": \"ccm2_dh_employee_docs_7c1ux\",\r\n                    \"attribute\": \"properties.employee_id1\"\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_tag_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Patch Event Tag Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.retentionPolicyId).to.eql(pm.environment.get(\"tmp_event_tag_retention_policy_id\"));\r",
+							"    pm.expect(jsonData.scopeNotes).to.eql(\"Scope1\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"scopeNotes\": \"Scope1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_tag_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Event Tag Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"\tpm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_tag_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Retention Policies",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Retention Policy Exists \", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.page.totalElements).is.greaterThan(0);\r",
+							"    const embedded = jsonData._embedded.retentionPolicies.find(m => m.retentionPolicyId === pm.environment.get(\"tmp_calculated_date_retention_policy_id\"));\r",
+							"    pm.expect(embedded).to.be.an(\"object\", \"Could not find the retention policy\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "{{retention_url}}/v4/retention-policies"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Calculated Date Retention Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"\tpm.response.to.have.status(204);\r",
+							"});\r",
+							"pm.test(\"Clean up environment\", function () {\r",
+							"\tpm.environment.unset(\"tmp_fixed_date_retention_policy_id\");\r",
+							"\tpm.environment.unset(\"tmp_calculated_date_retention_policy_id\");\r",
+							"\tpm.environment.unset(\"tmp_calendar_date_retention_policy_id\");\r",
+							"\tpm.environment.unset(\"tmp_event_legacy_retention_policy_id\");\r",
+							"\tpm.environment.unset(\"tmp_event_container_retention_policy_id\");\r",
+							"\tpm.environment.unset(\"tmp_event_tag_retention_policy_id\");\r",
+							"    pm.environment.unset(\"tmp_retention_policy_name\");    \r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": "{{retention_url}}/v4/retention-policies/{{tmp_calculated_date_retention_policy_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Hold",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Get Hold Id\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).is.not.empty;\r",
+							"    pm.expect(jsonData.holdId).is.not.null;\r",
+							"\tpm.environment.set(\"tmp_hold_id\", jsonData.holdId);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const holdName = \"Legal Matter\" + Math.floor((Math.random()*1000+1));\r",
+							"pm.environment.set(\"tmp_hold_name\", holdName);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"{{tmp_hold_name}}\",\r\n    \"description\": \"Description\",\r\n    \"mandate\": \"Mandate\",\r\n    \"scopeNotes\": \"Scope Notes\",\r\n    \"enabled\": true,\r\n    \"holdType\": \"HOLD\",\r\n\t    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/holds"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Hold",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Hold Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.holdId).to.eql(pm.environment.get(\"tmp_hold_id\"));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "{{retention_url}}/v4/holds/{{tmp_hold_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Put Hold",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Hold Id as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.holdId).to.eql(pm.environment.get(\"tmp_hold_id\"));\r",
+							"    pm.expect(jsonData.mandate).to.eql(\"Mandate1\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"{{tmp_hold_name}}\",\r\n    \"description\": \"Description\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"Scope Notes\",\r\n    \"enabled\": true,\r\n    \"holdType\": \"HOLD\",\r\n\t    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/holds/{{tmp_hold_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Patch Hold",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Scope is as expected\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.holdId).to.eql(pm.environment.get(\"tmp_hold_id\"));\r",
+							"    pm.expect(jsonData.scopeNotes).to.eql(\"Scope1\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"scopeNotes\": \"Scope1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{retention_url}}/v4/holds/{{tmp_hold_id}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Holds",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Status code text is OK\", function () {\r",
+							"\tpm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"pm.test(\"Response is not empty\", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"});\r",
+							"pm.test(\"Hold Exists \", function () {\r",
+							"\tvar jsonData = pm.response.json();\r",
+							"\tpm.expect(jsonData).not.empty;\r",
+							"    pm.expect(jsonData.page.totalElements).is.greaterThan(0);\r",
+							"    const embedded = jsonData._embedded.holds.find(m => m.holdId === pm.environment.get(\"tmp_hold_id\"));\r",
+							"    pm.expect(embedded).to.be.an(\"object\", \"Could not find the hold\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "{{retention_url}}/v4/holds"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Hold",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"\tpm.response.to.have.status(204);\r",
+							"});\r",
+							"pm.test(\"Clean up environment\", function () {\r",
+							"\tpm.environment.unset(\"tmp_access_token\");\r",
+							"\tpm.environment.unset(\"tmp_hold_id\");\r",
+							"    pm.environment.unset(\"tmp_hold_name\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{tmp_tenant_access_token}}"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": "{{retention_url}}/v4/holds/{{tmp_hold_id}}"
+			},
+			"response": []
+		}
+	]
+}
