@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "16731f17-2147-453a-bbec-086c79a2b4c4",
+		"_postman_id": "f59e9dd8-0af6-413c-8e82-a0ca2e236e03",
 		"name": "retention_service_collection",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
-		"_exporter_id": "26528844"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -77,7 +76,12 @@
 						}
 					]
 				},
-				"url": "{{tenant_token_url}}"
+				"url": {
+					"raw": "{{tenant_token_url}}",
+					"host": [
+						"{{tenant_token_url}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -107,8 +111,7 @@
 							"});\r",
 							""
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				},
 				{
@@ -118,30 +121,42 @@
 							"const retentionPolicyName = \"Fixed Date\" + Math.floor((Math.random()*1000+1));\r",
 							"pm.environment.set(\"tmp_retention_policy_name\", retentionPolicyName);"
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Fixed Date Description\",\r\n    \"mandate\": \"Mandate\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 4,\r\n            \"retentionYears\": 0,\r\n            \"retentionMonths\": 0,\r\n            \"retentionDays\": 0,\r\n            \"fixedDate\": \"2024-03-27T04:00:00.000Z\"\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}",
+					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Fixed Date Description\",\r\n    \"mandate\": \"Mandate\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 4,\r\n            \"retentionYears\": 0,\r\n            \"retentionMonths\": 0,\r\n            \"retentionDays\": 0,\r\n            \"fixedDate\": \"2024-03-27T04:00:00.000Z\"\r\n        }\r\n    ]        \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies"
+					]
+				}
 			},
 			"response": []
 		},
@@ -177,13 +192,27 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_fixed_date_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_fixed_date_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_fixed_date_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -212,30 +241,43 @@
 							"});\r",
 							""
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Fixed Date Description\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 4,\r\n            \"retentionYears\": 0,\r\n            \"retentionMonths\": 0,\r\n            \"retentionDays\": 0,\r\n            \"fixedDate\": \"2024-03-27T04:00:00.000Z\"\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}",
+					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Fixed Date Description\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 4,\r\n            \"retentionYears\": 0,\r\n            \"retentionMonths\": 0,\r\n            \"retentionDays\": 0,\r\n            \"fixedDate\": \"2024-03-27T04:00:00.000Z\"\r\n        }\r\n    ]        \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_fixed_date_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_fixed_date_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_fixed_date_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -272,9 +314,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PATCH",
 				"header": [],
@@ -287,7 +333,17 @@
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_fixed_date_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_fixed_date_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_fixed_date_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -311,13 +367,27 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "DELETE",
 				"header": [],
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_fixed_date_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_fixed_date_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_fixed_date_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -347,8 +417,7 @@
 							"});\r",
 							""
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				},
 				{
@@ -358,30 +427,42 @@
 							"const retentionPolicyName = \"Calculated Date\" + Math.floor((Math.random()*1000+1));\r",
 							"pm.environment.set(\"tmp_retention_policy_name\", retentionPolicyName);"
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Desc\",\r\n    \"mandate\": \"Mandate\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 1,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                 \"create_time\"\r\n            ]\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Desc\",\r\n    \"mandate\": \"Mandate\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 1,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                 \"TYPE:cms_file:create_time\"\r\n            ]\r\n        }\r\n    ]        \r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies"
+					]
+				}
 			},
 			"response": []
 		},
@@ -417,13 +498,27 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_calculated_date_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_calculated_date_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_calculated_date_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -452,30 +547,43 @@
 							"});\r",
 							""
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Desc\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 1,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                 \"create_time\"\r\n            ]\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Desc\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 1,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                 \"TYPE:cms_file:create_time\"\r\n            ]\r\n        }\r\n    ]        \r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_calculated_date_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_calculated_date_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_calculated_date_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -512,9 +620,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PATCH",
 				"header": [],
@@ -527,7 +639,17 @@
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_calculated_date_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_calculated_date_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_calculated_date_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -557,8 +679,7 @@
 							"});\r",
 							""
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				},
 				{
@@ -568,30 +689,42 @@
 							"const retentionPolicyName = \"Calendar Date\" + Math.floor((Math.random()*1000+1));\r",
 							"pm.environment.set(\"tmp_retention_policy_name\", retentionPolicyName);"
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n     \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Desc\",\r\n    \"mandate\": \"Mandate\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 2,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 4,\r\n            \"yearEndMonth\": 3,\r\n            \"yearEndDay\": 31,\r\n\r\n            \"baseDate\": [\r\n\r\n                  \"create_time\"\r\n\r\n             ]\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"raw": "{\r\n     \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Desc\",\r\n    \"mandate\": \"Mandate\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 2,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 4,\r\n            \"yearEndMonth\": 3,\r\n            \"yearEndDay\": 31,\r\n\r\n            \"baseDate\": [\r\n\r\n                  \"TYPE:cms_file:create_time\"\r\n\r\n             ]\r\n        }\r\n    ]        \r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies"
+					]
+				}
 			},
 			"response": []
 		},
@@ -627,13 +760,27 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_calendar_date_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_calendar_date_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_calendar_date_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -662,30 +809,43 @@
 							"});\r",
 							""
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Desc\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 2,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 4,\r\n            \"yearEndMonth\": 3,\r\n            \"yearEndDay\": 31,\r\n\r\n            \"baseDate\": [\r\n\r\n                  \"create_time\"\r\n\r\n             ]\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Desc\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 2,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 4,\r\n            \"yearEndMonth\": 3,\r\n            \"yearEndDay\": 31,\r\n\r\n            \"baseDate\": [\r\n\r\n                  \"TYPE:cms_file:create_time\"\r\n\r\n             ]\r\n        }\r\n    ]        \r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_calendar_date_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_calendar_date_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_calendar_date_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -722,9 +882,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PATCH",
 				"header": [],
@@ -737,7 +901,17 @@
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_calendar_date_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_calendar_date_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_calendar_date_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -761,13 +935,27 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "DELETE",
 				"header": [],
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_calendar_date_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_calendar_date_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_calendar_date_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -797,8 +985,7 @@
 							"});\r",
 							""
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				},
 				{
@@ -808,30 +995,42 @@
 							"const retentionPolicyName = \"Event Legacy\" + Math.floor((Math.random()*1000+1));\r",
 							"pm.environment.set(\"tmp_retention_policy_name\", retentionPolicyName);"
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n     \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Description\",\r\n    \"mandate\": \"Mandate\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 3,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"eventRule\": \"create_time\",\r\n            \"triggerType\": \"null\",\r\n            \"triggerCategory\": \"null\",\r\n            \"taggingAttribute\": \"null\"\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"raw": "{\r\n     \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Description\",\r\n    \"mandate\": \"Mandate\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 3,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"eventRule\": \"create_time\",\r\n            \"triggerType\": \"null\",\r\n            \"triggerCategory\": \"null\",\r\n            \"taggingAttribute\": \"null\"\r\n        }\r\n    ]        \r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies"
+					]
+				}
 			},
 			"response": []
 		},
@@ -867,13 +1066,27 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_legacy_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_event_legacy_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_event_legacy_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -902,30 +1115,43 @@
 							"});\r",
 							""
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Description\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 3,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"eventRule\": \"create_time\",\r\n            \"triggerType\": \"null\",\r\n            \"triggerCategory\": \"null\",\r\n            \"taggingAttribute\": \"null\"\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"Description\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"Scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 3,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 2,\r\n            \"retentionDays\": 3,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"eventRule\": \"create_time\",\r\n            \"triggerType\": \"null\",\r\n            \"triggerCategory\": \"null\",\r\n            \"taggingAttribute\": \"null\"\r\n        }\r\n    ]        \r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_legacy_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_event_legacy_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_event_legacy_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -962,9 +1188,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PATCH",
 				"header": [],
@@ -977,7 +1207,17 @@
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_legacy_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_event_legacy_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_event_legacy_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1001,13 +1241,27 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "DELETE",
 				"header": [],
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_legacy_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_event_legacy_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_event_legacy_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1037,8 +1291,7 @@
 							"});\r",
 							""
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				},
 				{
@@ -1048,30 +1301,42 @@
 							"const retentionPolicyName = \"Event Container\" + Math.floor((Math.random()*1000+1));\r",
 							"pm.environment.set(\"tmp_retention_policy_name\", retentionPolicyName);"
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n     \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"desc\",\r\n    \"mandate\": \"mandate\",\r\n    \"scopeNotes\": \"scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 6,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 1,\r\n            \"retentionDays\": 1,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                  \"properties.entry_date_lh2ln\"\r\n\r\n             ],\r\n            \"eventRule\": \"properties.entry_date_lh2ln\",\r\n            \"triggerType\": \"ccm2_entry_documents_3vv8a\",\r\n            \"triggerCategory\": \"folder\",\r\n            \"searchRules\": [\r\n                {\r\n                    \"actionType\": \"CONTAINER\"\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"raw": "{\r\n     \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"desc\",\r\n    \"mandate\": \"mandate\",\r\n    \"scopeNotes\": \"scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 6,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 1,\r\n            \"retentionDays\": 1,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                  \"TYPE:cms_folder:create_time\"\r\n\r\n             ],\r\n            \"eventRule\": \"create_time\",\r\n            \"triggerType\": \"cms_folder\",\r\n            \"triggerCategory\": \"folder\",\r\n            \"searchRules\": [\r\n                {\r\n                    \"actionType\": \"CONTAINER\"\r\n                }\r\n            ]\r\n        }\r\n    ]        \r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1107,13 +1372,27 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_container_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_event_container_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_event_container_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1142,30 +1421,43 @@
 							"});\r",
 							""
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"desc\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 6,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 1,\r\n            \"retentionDays\": 1,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                  \"properties.entry_date_lh2ln\"\r\n\r\n             ],\r\n            \"eventRule\": \"properties.entry_date_lh2ln\",\r\n            \"triggerType\": \"ccm2_entry_documents_3vv8a\",\r\n            \"triggerCategory\": \"folder\",\r\n            \"searchRules\": [\r\n                {\r\n                    \"actionType\": \"CONTAINER\"\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"desc\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 6,\r\n            \"retentionYears\": 1,\r\n            \"retentionMonths\": 1,\r\n            \"retentionDays\": 1,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                  \"TYPE:cms_file:create_time\"\r\n\r\n             ],\r\n            \"eventRule\": \"create_time\",\r\n            \"triggerType\": \"cms_folder\",\r\n            \"triggerCategory\": \"folder\",\r\n            \"searchRules\": [\r\n                {\r\n                    \"actionType\": \"CONTAINER\"\r\n                }\r\n            ]\r\n        }\r\n    ]        \r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_container_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_event_container_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_event_container_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1202,9 +1494,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PATCH",
 				"header": [],
@@ -1217,7 +1513,17 @@
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_container_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_event_container_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_event_container_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1241,13 +1547,27 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "DELETE",
 				"header": [],
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_container_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_event_container_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_event_container_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1277,8 +1597,7 @@
 							"});\r",
 							""
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				},
 				{
@@ -1286,37 +1605,49 @@
 					"script": {
 						"exec": [
 							"const retentionPolicyName = \"Event Tag\" + Math.floor((Math.random()*1000+1));\r",
-							"pm.environment.set(\"tmp_retention_policy_name\", retentionPolicyName);"
+							"pm.environment.set(\"tmp_event_tag_retention_policy_id\", retentionPolicyName);"
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n     \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"desc\",\r\n    \"mandate\": \"mandate\",\r\n    \"scopeNotes\": \"scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 6,\r\n            \"retentionYears\": 2,\r\n            \"retentionMonths\": 1,\r\n            \"retentionDays\": 1,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                    \"properties.end_of_employment1\"\r\n\r\n             ],\r\n            \"eventRule\": \"properties.end_of_employment1\",\r\n            \"triggerType\": \"ccm2_dh_employee_daqbp\",\r\n            \"triggerCategory\": \"file\",\r\n            \"taggingAttribute\": \"properties.employee_id3\",\r\n            \"searchRules\": [\r\n                {\r\n                    \"actionType\": \"SEARCH\",\r\n                    \"category\": \"file\",\r\n                    \"type\": \"ccm2_dh_employee_docs_7c1ux\",\r\n                    \"attribute\": \"properties.employee_id1\"\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"raw": "{\r\n     \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"desc\",\r\n    \"mandate\": \"mandate\",\r\n    \"scopeNotes\": \"scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 6,\r\n            \"retentionYears\": 2,\r\n            \"retentionMonths\": 1,\r\n            \"retentionDays\": 1,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                    \"TYPE:cms_file:create_time\"\r\n\r\n             ],\r\n            \"eventRule\": \"properties.end_of_employment\",\r\n            \"triggerType\": \"employee\",\r\n            \"triggerCategory\": \"file\",\r\n            \"taggingAttribute\": \"properties.employee_id\",\r\n            \"searchRules\": [\r\n                {\r\n                    \"actionType\": \"SEARCH\",\r\n                    \"category\": \"file\",\r\n                    \"type\": \"employee_docs\",\r\n                    \"attribute\": \"properties.employee_id\"\r\n                }\r\n            ]\r\n        }\r\n    ]        \r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies"
+					]
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "Get Event Container Retention Policy Copy",
+			"name": "Get EventTag Retention Policy",
 			"event": [
 				{
 					"listen": "test",
@@ -1347,9 +1678,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [
@@ -1358,7 +1693,17 @@
 						"value": "application/json"
 					}
 				],
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_tag_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_event_tag_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_event_tag_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1387,30 +1732,43 @@
 							"});\r",
 							""
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"desc\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 6,\r\n            \"retentionYears\": 2,\r\n            \"retentionMonths\": 1,\r\n            \"retentionDays\": 1,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                    \"properties.end_of_employment1\"\r\n\r\n             ],\r\n            \"eventRule\": \"properties.end_of_employment1\",\r\n            \"triggerType\": \"ccm2_dh_employee_daqbp\",\r\n            \"triggerCategory\": \"file\",\r\n            \"taggingAttribute\": \"properties.employee_id3\",\r\n            \"searchRules\": [\r\n                {\r\n                    \"actionType\": \"SEARCH\",\r\n                    \"category\": \"file\",\r\n                    \"type\": \"ccm2_dh_employee_docs_7c1ux\",\r\n                    \"attribute\": \"properties.employee_id1\"\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"raw": "{\r\n    \"title\": \"{{tmp_retention_policy_name}}\",\r\n    \"description\": \"desc\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"scope\",\r\n    \"enabled\": true,\r\n    \"delayEnforcement\": 1,\r\n    \"phases\": [\r\n        {\r\n            \"phaseName\": \"mandatory_value\",\r\n            \"dispositionActionCode\": 4,\r\n            \"retentionTriggerCode\": 6,\r\n            \"retentionYears\": 2,\r\n            \"retentionMonths\": 1,\r\n            \"retentionDays\": 1,\r\n            \"retentionIntervals\": 0,\r\n            \"yearEndMonth\": 0,\r\n            \"yearEndDay\": 0,\r\n            \"baseDate\": [\r\n\r\n                    \"TYPE:cms_file:create_time\"\r\n\r\n             ],\r\n            \"eventRule\": \"properties.end_of_employment\",\r\n            \"triggerType\": \"employee\",\r\n            \"triggerCategory\": \"file\",\r\n            \"taggingAttribute\": \"properties.employee_id\",\r\n            \"searchRules\": [\r\n                {\r\n                    \"actionType\": \"SEARCH\",\r\n                    \"category\": \"file\",\r\n                    \"type\": \"employee_docs\",\r\n                    \"attribute\": \"properties.employee_id\"\r\n                }\r\n            ]\r\n        }\r\n    ]        \r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_tag_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_event_tag_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_event_tag_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1447,9 +1805,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PATCH",
 				"header": [],
@@ -1462,12 +1824,22 @@
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_tag_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_event_tag_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_event_tag_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "Delete Event Tag Retention Policy",
+			"name": "Delete Event Tag Retention Policy Copy",
 			"event": [
 				{
 					"listen": "test",
@@ -1486,13 +1858,27 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "DELETE",
 				"header": [],
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_event_tag_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_event_tag_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_event_tag_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1529,13 +1915,26 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
-				"url": "{{retention_url}}/v4/retention-policies"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1556,36 +1955,37 @@
 							"\tpm.environment.unset(\"tmp_event_legacy_retention_policy_id\");\r",
 							"\tpm.environment.unset(\"tmp_event_container_retention_policy_id\");\r",
 							"\tpm.environment.unset(\"tmp_event_tag_retention_policy_id\");\r",
-							"    pm.environment.unset(\"tmp_retention_policy_name\");    \r",
-							"});\r",
-							"\r",
-							""
+							"\tpm.environment.unset(\"tmp_retention_policy_name\");\r",
+							"});"
 						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							""
-						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "DELETE",
 				"header": [],
-				"url": "{{retention_url}}/v4/retention-policies/{{tmp_calculated_date_retention_policy_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/retention-policies/{{tmp_calculated_date_retention_policy_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"retention-policies",
+						"{{tmp_calculated_date_retention_policy_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1614,8 +2014,7 @@
 							"});\r",
 							""
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				},
 				{
@@ -1625,30 +2024,42 @@
 							"const holdName = \"Legal Matter\" + Math.floor((Math.random()*1000+1));\r",
 							"pm.environment.set(\"tmp_hold_name\", holdName);"
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"{{tmp_hold_name}}\",\r\n    \"description\": \"Description\",\r\n    \"mandate\": \"Mandate\",\r\n    \"scopeNotes\": \"Scope Notes\",\r\n    \"enabled\": true,\r\n    \"holdType\": \"HOLD\",\r\n\t    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"raw": "{\r\n    \"title\": \"{{tmp_hold_name}}\",\r\n    \"description\": \"Description\",\r\n    \"mandate\": \"Mandate\",\r\n    \"scopeNotes\": \"Scope Notes\",\r\n    \"enabled\": true,\r\n    \"holdType\": \"HOLD\"  \r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/holds"
+				"url": {
+					"raw": "{{retention_url}}/v4/holds",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"holds"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1684,13 +2095,27 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
-				"url": "{{retention_url}}/v4/holds/{{tmp_hold_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/holds/{{tmp_hold_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"holds",
+						"{{tmp_hold_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1719,30 +2144,43 @@
 							"});\r",
 							""
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"{{tmp_hold_name}}\",\r\n    \"description\": \"Description\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"Scope Notes\",\r\n    \"enabled\": true,\r\n    \"holdType\": \"HOLD\",\r\n\t    \"acl\": {\r\n        \"userAccess\": {\r\n            \"roleAssignments\": [\r\n                {\r\n                    \"principal\": {\r\n                        \"sub\": \"{{user_name}}\"\r\n                    },\r\n                    \"role\": \"resource.owner\"\r\n                }\r\n            ]\r\n        }\r\n    }        \r\n}\r\n",
+					"raw": "{\r\n    \"title\": \"{{tmp_hold_name}}\",\r\n    \"description\": \"Description\",\r\n    \"mandate\": \"Mandate1\",\r\n    \"scopeNotes\": \"Scope Notes\",\r\n    \"enabled\": true,\r\n    \"holdType\": \"HOLD\"        \r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/holds/{{tmp_hold_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/holds/{{tmp_hold_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"holds",
+						"{{tmp_hold_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1779,9 +2217,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PATCH",
 				"header": [],
@@ -1794,7 +2236,17 @@
 						}
 					}
 				},
-				"url": "{{retention_url}}/v4/holds/{{tmp_hold_id}}"
+				"url": {
+					"raw": "{{retention_url}}/v4/holds/{{tmp_hold_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"holds",
+						"{{tmp_hold_id}}"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1831,13 +2283,26 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
-				"url": "{{retention_url}}/v4/holds"
+				"url": {
+					"raw": "{{retention_url}}/v4/holds",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"holds"
+					]
+				}
 			},
 			"response": []
 		},
@@ -1852,15 +2317,14 @@
 							"\tpm.response.to.have.status(204);\r",
 							"});\r",
 							"pm.test(\"Clean up environment\", function () {\r",
-							"\tpm.environment.unset(\"tmp_access_token\");\r",
+							"\tpm.environment.unset(\"tmp_tenant_access_token\");\r",
 							"\tpm.environment.unset(\"tmp_hold_id\");\r",
-							"    pm.environment.unset(\"tmp_hold_name\");\r",
+							"\tpm.environment.unset(\"tmp_hold_name\");\r",
 							"});\r",
 							"\r",
 							""
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				},
 				{
@@ -1869,21 +2333,43 @@
 						"exec": [
 							""
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{tmp_tenant_access_token}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tmp_tenant_access_token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "DELETE",
 				"header": [],
-				"url": "{{retention_url}}/v4/holds/{{tmp_hold_id}}"
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{retention_url}}/v4/holds/{{tmp_hold_id}}",
+					"host": [
+						"{{retention_url}}"
+					],
+					"path": [
+						"v4",
+						"holds",
+						"{{tmp_hold_id}}"
+					]
+				}
 			},
 			"response": []
 		}
